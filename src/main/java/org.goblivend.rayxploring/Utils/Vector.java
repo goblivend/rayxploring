@@ -1,6 +1,6 @@
 package org.goblivend.rayxploring.Utils;
 
-public interface Point<T extends Point<T>> {
-
+public interface Vector<T extends Vector<T>> {
     T translate(T dir, double time);
+    double hypot();
 }

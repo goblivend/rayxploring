@@ -1,10 +1,9 @@
 package org.goblivend.rayxploring.components;
 
-import org.goblivend.rayxploring.Utils.Point;
+import org.goblivend.rayxploring.Utils.Vector;
 
-import java.util.List;
+import java.util.stream.Stream;
 
-public interface Light<P extends Point<P>> {
-
-    List<Ray<P>> emit();
+public interface Light<V extends Vector<V>> {
+    Stream<Ray<V>> emit();
 }

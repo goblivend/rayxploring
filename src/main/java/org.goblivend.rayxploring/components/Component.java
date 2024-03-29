@@ -1,7 +1,7 @@
 package org.goblivend.rayxploring.components;
 
-import org.goblivend.rayxploring.Utils.Point;
+import org.goblivend.rayxploring.Utils.Vector;
 
-public interface Component<P extends Point<P>> {
-    Double intercept(Ray<P> ray);
+public interface Component<V extends Vector<V>> {
+    Double intercept(Ray<V> ray);
 }
