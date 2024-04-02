@@ -10,4 +10,9 @@ public record Vector2D(double x, double y) implements Vector<Vector2D> {
     public double hypot() {
         return Math.hypot(x, y);
     }
+
+    @Override
+    public Vector2D reverse() {
+        return new Vector2D(-x, -y);
+    }
 }

@@ -13,4 +13,9 @@ public record Vector3D(double x, double y, double z) implements Vector<Vector3D>
     public double hypot() {
         return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
     }
+
+    @Override
+    public Vector3D reverse() {
+        return new Vector3D(-x, -y, -z);
+    }
 }
