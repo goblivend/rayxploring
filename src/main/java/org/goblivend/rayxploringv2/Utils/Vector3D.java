@@ -4,6 +4,7 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 public record Vector3D(double x, double y, double z) implements Vector<Vector3D> {
+    public static Vector3D ORIGIN = new Vector3D(0, 0, 0);
     public Vector3D(double[][] m) {
         this(m[0][0], m[1][0], m[2][0]);
     }

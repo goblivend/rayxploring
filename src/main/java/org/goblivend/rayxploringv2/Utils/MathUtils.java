@@ -102,6 +102,11 @@ public class MathUtils {
         return new Tuple<>(anglesToVector3d(new Vector2D(alpha2, beta2)), anglesToVector3d(new Vector2D(alpha3, beta3)));
     }
 
+    public static Tuple<Vector3D, Vector3D> orthonormalBase(Vector3D v1) {
+        var orthogonalBase = orthogonalBase(v1);
+        return new Tuple<>(orthogonalBase.t1().normalized(), orthogonalBase.t2().normalized());
+    }
+
     /**
      * Returns the roots of any polynomial of the shape aX^2 + bX + c
      *
@@ -160,7 +165,7 @@ public class MathUtils {
      * @param plane  X and Y vectors describing the arrival plane ()
      * @param origin The point of origin of the plane
      * @param ray    The ray
-     * @return a 3-tuple containing in first position the time at which the ray reaches the plane, then the
+     * @return a 3-tuple containing in first position the time at which the ray reaches the plane, then the coordinates on the plane
      */
     public static Tuple3<Double, Double, Double> intersection(Tuple<Vector3D, Vector3D> plane, Vector3D origin, Ray<Vector3D> ray) {
         double X = ray.pos().x() - origin.x();
@@ -302,10 +307,16 @@ public class MathUtils {
         };
     }
 
-    public static Color reflectColor(Color rayColor, Color materialColor) {
-        int r = (int) (rayColor.getRed() * (materialColor.getRed() / 255.));
-        int g = (int) (rayColor.getGreen() * (materialColor.getGreen() / 255.));
-        int b = (int) (rayColor.getBlue() * (materialColor.getBlue() / 255.));
+    public static Color reflectColor(Color rayColor, Color materialColor, double reflectivity) {
+        assert 0 <= reflectivity && reflectivity <= 1;
+
+//        int r = (int) (rayColor.getRed() * (materialColor.getRed() / 255.));
+//        int g = (int) (rayColor.getGreen() * (materialColor.getGreen() / 255.));
+//        int b = (int) (rayColor.getBlue() * (materialColor.getBlue() / 255.));
+//
+        int r = (int) (rayColor.getRed()   * reflectivity + materialColor.getRed()   * (1-reflectivity));
+        int g = (int) (rayColor.getGreen() * reflectivity + materialColor.getGreen() * (1-reflectivity));
+        int b = (int) (rayColor.getBlue()  * reflectivity + materialColor.getBlue()  * (1-reflectivity));
 
         return new Color(r, g, b);
     }
@@ -320,5 +331,19 @@ public class MathUtils {
         int b = (int) clamp(0, 255, color.getBlue() * intensity);
 
         return new Color(r, g, b);
+    }
+
+
+    public static Vector3D reboundPlane(Vector3D zAxis, Tuple<Vector3D, Vector3D> xyAxis, Vector3D dir) {
+        double[][] transition = transitionMatrix(xyAxis.t1(), xyAxis.t2(), zAxis);
+
+        double[][] dirNewBase = matMul(transpose(transition), dir.reverse().toMatrix());
+
+        Vector2D angles = vector3dToAngles(new Vector3D(dirNewBase));
+        Vector3D rnewBase = anglesToVector3d(new Vector2D(angles.x() + Math.PI, angles.y()));
+
+        double[][] rebounded = matMul(transition, rnewBase.toMatrix());
+
+        return new Vector3D(rebounded);
     }
 }

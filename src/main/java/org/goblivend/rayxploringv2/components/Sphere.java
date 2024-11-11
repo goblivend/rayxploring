@@ -10,14 +10,16 @@ import java.util.Objects;
 import static org.goblivend.rayxploringv2.Utils.MathUtils.*;
 
 public class Sphere implements Component<Vector3D> {
+    protected final Color color;
+    protected final double reflecivity;
     protected final Vector3D center;
     protected final Integer radius;
-    protected final Color color;
 
-    public Sphere(Vector3D center, Integer radius, Color color) {
+    public Sphere(Color color, double reflectivity, Vector3D center, Integer radius) {
+        this.color = color;
+        this.reflecivity = reflectivity;
         this.center = center;
         this.radius = radius;
-        this.color = color;
     }
 
     @Override
@@ -33,23 +35,18 @@ public class Sphere implements Component<Vector3D> {
 
         Vector3D hitPoint = ray.pos().translate(ray.dir(), interceptTime);
 
-        Vector3D Zaxis = new Vector3D(hitPoint.x() - center.x(), hitPoint.y() - center.y(), hitPoint.z() - center.z()).normalized();
-        Tuple<Vector3D, Vector3D> XYaxis = orthogonalBase(Zaxis);
+        Vector3D zAxis = new Vector3D(hitPoint.x() - center.x(), hitPoint.y() - center.y(), hitPoint.z() - center.z()).normalized();
 
-        double[][] transition = transitionMatrix(XYaxis.t1(), XYaxis.t2(), Zaxis);
+        Tuple<Vector3D, Vector3D> xyAxis = orthogonalBase(zAxis);
 
-        double[][] dirNewBase = matMul(transpose(transition), ray.dir().reverse().toMatrix());
+        Vector3D reboundedDir = reboundPlane(zAxis, xyAxis, ray.dir());
 
-        Vector2D angles = vector3dToAngles(new Vector3D(dirNewBase));
-        Vector3D rnewBase = anglesToVector3d(new Vector2D(angles.x() + Math.PI, angles.y()));
-
-        double[][] rebounded = matMul(transition, rnewBase.toMatrix());
 
 
         Vector3D lightDir = hitPoint.plus(center.reverse());
         double scalar = Math.abs(scalarProduct(ray.dir(), lightDir));
 
-        return new Ray<>(ray.imgPos(), hitPoint, new Vector3D(rebounded), reflectColor(ray.color(), intensifyColor(color, scalar)));
+        return new Ray<>(ray.imgPos(), hitPoint, reboundedDir, c -> ray.color().apply(intensifyColor(reflectColor(c, color, reflecivity), scalar / 2 + 0.5)));
     }
 
     public Vector3D center() {

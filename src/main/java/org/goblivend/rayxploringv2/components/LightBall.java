@@ -10,8 +10,8 @@ import static org.goblivend.rayxploringv2.Utils.MathUtils.*;
 public final class LightBall extends Sphere {
     private final double intensity;
 
-    public LightBall(Vector3D center, Integer radius, Color color, double intensity) {
-        super(center, radius, color);
+    public LightBall(Color color, double reflectivity, Vector3D center, Integer radius, double intensity) {
+        super(color, reflectivity, center, radius);
         this.intensity = intensity;
     }
 
@@ -19,15 +19,7 @@ public final class LightBall extends Sphere {
     public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
         Ray<Vector3D> tmp = super.rebound(ray);
 
-//
-//        Double interceptTime = intercept(ray);
-//        Vector3D hitPoint = ray.pos().translate(ray.dir(), interceptTime);
-//        Vector3D lightDir = hitPoint.plus(center.reverse());
-//
-//        double scalar = Math.abs(scalarProduct(ray.dir(), lightDir));
-
-
-        return new Ray<>(tmp.imgPos(), tmp.pos(), tmp.dir(), intensifyColor(tmp.color(),  intensity));
+        return new Ray<>(tmp.imgPos(), tmp.pos(), tmp.dir(), c -> intensifyColor(tmp.color().apply(c),  intensity));
     }
 
     public double intensity() {

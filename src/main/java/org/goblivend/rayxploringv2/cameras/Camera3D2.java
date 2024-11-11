@@ -1,4 +1,4 @@
-package org.goblivend.rayxploringv2.components;
+package org.goblivend.rayxploringv2.cameras;
 
 public class Camera3D2 {//extends Camera<Vector3D> implements Component<Vector3D> {
 //    private final Vector3D center;

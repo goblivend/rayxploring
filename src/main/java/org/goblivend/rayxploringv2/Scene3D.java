@@ -1,7 +1,7 @@
 package org.goblivend.rayxploringv2;
 
 import org.goblivend.rayxploringv2.Utils.Vector3D;
-import org.goblivend.rayxploringv2.components.Camera;
+import org.goblivend.rayxploringv2.cameras.Camera;
 import org.goblivend.rayxploringv2.components.Component;
 
 import java.awt.image.BufferedImage;
@@ -17,7 +17,6 @@ public class Scene3D implements Scene {
         this.cameras = cameras;
     }
 
-    // TODO : Add reflection of rays on surfaces
     public List<BufferedImage> render() {
         return cameras.stream().map(cam -> cam.render(components)).toList();
     }

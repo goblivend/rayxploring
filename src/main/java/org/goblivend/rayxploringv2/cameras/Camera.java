@@ -1,7 +1,9 @@
-package org.goblivend.rayxploringv2.components;
+package org.goblivend.rayxploringv2.cameras;
 
 import org.goblivend.rayxploringv2.Utils.Tuple;
 import org.goblivend.rayxploringv2.Utils.Vector;
+import org.goblivend.rayxploringv2.components.Component;
+import org.goblivend.rayxploringv2.components.Ray;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -48,7 +50,7 @@ public abstract class Camera<V extends Vector<V>> {
 
             } while (hit.isPresent());
 
-            image.setRGB((int) ray.imgPos().x(), (int) ray.imgPos().y(), ray.color().getRGB());
+            image.setRGB((int) ray.imgPos().x(), (int) ray.imgPos().y(), ray.color().apply(Color.WHITE).getRGB());
         });
         return image;
     }
