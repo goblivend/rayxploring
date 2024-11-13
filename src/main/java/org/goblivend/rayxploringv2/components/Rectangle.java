@@ -18,14 +18,19 @@ public class Rectangle extends Plane {
 
     protected boolean inBounds(Vector2D pos) {
         return -dimensions.x() / 2 <= pos.x()
-                && pos.x() < dimensions.x() / 2
+                && pos.x() <= dimensions.x() / 2
                 && -dimensions.y() / 2 <= pos.y()
-                && pos.y() < dimensions.y() / 2;
+                && pos.y() <= dimensions.y() / 2;
     }
 
     @Override
     public Double intercept(Ray<Vector3D> ray) {
         var t = intersection(base, pos, ray);
         return inBounds(new Vector2D(t.t2(), t.t3())) ? t.t1() : null;
+    }
+
+    @Override
+    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
+        return super.rebound(ray);
     }
 }

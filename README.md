@@ -42,3 +42,6 @@ I also managed to specify how reflective a surface is (though I might need to re
 
 Here is an example with a mirror Sphere, a "shiny" plane, 2 mat cubes (one in front and one behind the camera which can be seen in the ball)
 ![example_image.png](images%2Fexample_image.png)
+
+Now added the pavement feature to easily create rubik's cubes
+![example_rubikscube.png](images%2Fexample_rubikscube.png)
