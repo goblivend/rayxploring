@@ -346,4 +346,17 @@ public class MathUtils {
 
         return new Vector3D(rebounded);
     }
+
+    public static Vector3D refractPlane(Vector3D zAxis, Tuple<Vector3D, Vector3D> xyAxis, Vector3D dir, double refractiveness) {
+        double[][] transition = transitionMatrix(xyAxis.t1(), xyAxis.t2(), zAxis);
+
+        double[][] dirNewBase = matMul(transpose(transition), dir.reverse().toMatrix());
+
+        Vector2D angles = vector3dToAngles(new Vector3D(dirNewBase));
+        Vector3D rnewBase = anglesToVector3d(new Vector2D(angles.x(), angles.y() * refractiveness)); // TODO: Random formula, need to think this more
+
+        double[][] rebounded = matMul(transition, rnewBase.toMatrix());
+
+        return new Vector3D(rebounded);
+    }
 }

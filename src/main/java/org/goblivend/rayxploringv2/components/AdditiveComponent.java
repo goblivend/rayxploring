@@ -3,11 +3,13 @@ package org.goblivend.rayxploringv2.components;
 import org.goblivend.rayxploringv2.Utils.Tuple;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class AdditiveComponent implements Component<Vector3D> {
     protected final List<Component<Vector3D>> subComponents;
@@ -26,7 +28,7 @@ public class AdditiveComponent implements Component<Vector3D> {
     }
 
     @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
+    public Tuple<Stream<Ray<Vector3D>>, Function<Stream<Color>, Color>> rebound(Ray<Vector3D> ray) {
         return subComponents.stream()
                 .map(c -> new Tuple<>(c, c.intercept(ray)))
                 .filter(t -> Objects.nonNull(t.t2()))

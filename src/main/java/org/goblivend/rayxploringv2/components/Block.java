@@ -27,13 +27,4 @@ public class Block extends AdditiveComponent {
     public Block(Color color, double reflectivity, Vector3D pos, Vector3D dir, Vector3D sizes) {
         this(color, reflectivity, pos, dir, orthonormalBase(dir), sizes);
     }
-    @Override
-    public Double intercept(Ray<Vector3D> ray) {
-        return super.intercept(ray);
-    }
-
-    @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
-        return super.rebound(ray);
-    }
 }

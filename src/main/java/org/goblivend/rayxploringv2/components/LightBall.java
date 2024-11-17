@@ -1,8 +1,11 @@
 package org.goblivend.rayxploringv2.components;
 
+import org.goblivend.rayxploringv2.Utils.Tuple;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 
 import java.awt.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.goblivend.rayxploringv2.Utils.MathUtils.intensifyColor;
 
@@ -15,9 +18,12 @@ public final class LightBall extends Sphere {
     }
 
     @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
-        Ray<Vector3D> tmp = super.rebound(ray);
+    public Tuple<Stream<Ray<Vector3D>>, Function<Stream<Color>, Color>> rebound(Ray<Vector3D> ray) {
+        var superRebound = super.rebound(ray);
 
-        return new Ray<>(tmp.imgPos(), tmp.pos(), tmp.dir(), c -> intensifyColor(tmp.color().apply(c),  intensity));
+        return new Tuple<>(
+                superRebound.t1(),
+                c -> intensifyColor(superRebound.t2().apply(c), intensity)
+        );
     }
 }

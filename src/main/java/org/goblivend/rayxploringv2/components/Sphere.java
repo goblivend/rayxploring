@@ -4,6 +4,8 @@ import org.goblivend.rayxploringv2.Utils.Tuple;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 
 import java.awt.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.goblivend.rayxploringv2.Utils.MathUtils.*;
 
@@ -26,7 +28,7 @@ public class Sphere implements Component<Vector3D> {
     }
 
     @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
+    public Tuple<Stream<Ray<Vector3D>>, Function<Stream<Color>, Color>> rebound(Ray<Vector3D> ray) {
         Double interceptTime = intercept(ray);
         assert interceptTime != null && interceptTime > 1E-5;
 
@@ -40,10 +42,20 @@ public class Sphere implements Component<Vector3D> {
         Vector3D reboundedDir = reboundPlane(zAxis, xyAxis, ray.dir());
 
 
-
         Vector3D lightDir = hitPoint.plus(center.reverse());
         double scalar = Math.abs(scalarProduct(ray.dir(), lightDir));
 
-        return new Ray<>(ray.imgPos(), hitPoint, reboundedDir, c -> ray.color().apply(intensifyColor(reflectColor(c, color, reflectivity), scalar / 2 + 0.5)));
+        return new Tuple<>(
+                Stream.of(
+                        new Ray<>(
+                                ray.imgPos(),
+                                hitPoint,
+                                reboundedDir,
+                                ray.color())
+                ),
+                colors -> colors.map(c -> intensifyColor(reflectColor(c, color, reflectivity), scalar / 2 + 0.5))
+                        .findFirst()
+                        .orElseThrow()
+        );
     }
 }

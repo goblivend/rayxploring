@@ -1,9 +1,12 @@
 package org.goblivend.rayxploringv2.components;
 
+import org.goblivend.rayxploringv2.Utils.Tuple;
 import org.goblivend.rayxploringv2.Utils.Vector2D;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 
 import java.awt.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.goblivend.rayxploringv2.Utils.MathUtils.*;
 
@@ -21,20 +24,27 @@ public class Pavement extends Rectangle {
     }
 
     @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
+    public Tuple<Stream<Ray<Vector3D>>, Function<Stream<Color>, Color>> rebound(Ray<Vector3D> ray) {
         var inter = intersection(base, pos, ray);
 
         var squareSize = eltSize + gapSize;
-        var deltaX = ((inter.t2() + squareSize/2 % squareSize) + squareSize) % squareSize;
-        var deltaY = ((inter.t3() + squareSize/2 % squareSize) + squareSize) % squareSize;
+        var deltaX = ((inter.t2() + squareSize / 2 % squareSize) + squareSize) % squareSize;
+        var deltaY = ((inter.t3() + squareSize / 2 % squareSize) + squareSize) % squareSize;
 
         Color actualColor = deltaX < gapSize || deltaY < gapSize ? gapColor : color;
 
-        return new Ray<>(
-                ray.imgPos(),
-                ray.pos().translate(ray.dir(), inter.t1()),
-                reboundPlane(dir, base, ray.dir()),
-                c -> ray.color().apply(reflectColor(c, actualColor, reflectivity)));
-
+        return new Tuple<>(
+                Stream.of(
+                        new Ray<>(
+                                ray.imgPos(),
+                                ray.pos().translate(ray.dir(), inter.t1()),
+                                reboundPlane(dir, base, ray.dir()),
+                                ray.color()
+                        )
+                ),
+                colors -> colors.map(c -> reflectColor(c, actualColor, reflectivity))
+                        .findFirst()
+                        .orElseThrow()
+        );
     }
 }

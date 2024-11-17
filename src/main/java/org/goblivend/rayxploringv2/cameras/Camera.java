@@ -28,29 +28,35 @@ public abstract class Camera<V extends Vector<V>> {
 
     public abstract Stream<Ray<V>> generateRays();
 
+    private Color renderRay(List<Component<V>> comps, Ray<V> ray) {
+        Optional<Component<V>> hit;
+
+        Function<Ray<V>, Function<Component<V>, Tuple<Component<V>, Double>>> intercept = r -> (o -> new Tuple<>(o, o.intercept(r)));
+        Predicate<Tuple<Component<V>, Double>> filter = t -> t.t2() != null && t.t2() > 1E-5;
+
+        hit = comps.stream()
+                .map(intercept.apply(ray))
+                .filter(filter)
+                .min(comparing(Tuple::t2))
+                .map(Tuple::t1);
+
+        if (hit.isEmpty())
+            return ray.color();
+
+        var rebound = hit.get().rebound(ray);
+
+        var subRays = rebound.t1();
+        var colorApplicator =  rebound.t2();
+
+        return colorApplicator.apply(subRays.map(r -> renderRay(comps, r)));
+
+    }
+
     public BufferedImage render(List<Component<V>> comps) {
         BufferedImage image = new BufferedImage(width, height, Image.SCALE_DEFAULT);
 
         generateRays().forEach(ray -> {
-
-            Optional<Component<V>> hit;
-            Function<Ray<V>, Function<Component<V>, Tuple<Component<V>, Double>>> intercept = r -> (o -> new Tuple<>(o, o.intercept(r)));
-
-            Predicate<Tuple<Component<V>, Double>> filter = t -> t.t2() != null && t.t2() > 1E-5;
-
-            do {
-                hit = comps.stream()
-                        .map(intercept.apply(ray))
-                        .filter(filter)
-                        .min(comparing(Tuple::t2))
-                        .map(Tuple::t1);
-
-                if (hit.isPresent())
-                    ray = hit.get().rebound(ray);
-
-            } while (hit.isPresent());
-
-            image.setRGB((int) ray.imgPos().x(), (int) ray.imgPos().y(), ray.color().apply(Color.WHITE).getRGB());
+            image.setRGB((int) ray.imgPos().x(), (int) ray.imgPos().y(), renderRay(comps, ray).getRGB());
         });
         return image;
     }

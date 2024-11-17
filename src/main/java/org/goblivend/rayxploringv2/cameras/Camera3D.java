@@ -6,6 +6,7 @@ import org.goblivend.rayxploringv2.Utils.Vector2D;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 import org.goblivend.rayxploringv2.components.Ray;
 
+import java.awt.*;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -81,7 +82,7 @@ public class Camera3D extends Camera<Vector3D> {
                             .translate(dispersion.t1(), relativePos.x())
                             .translate(dispersion.t2(), relativePos.y());
 
-                    return new Ray<>(imgPos, worldPos, dir, c -> c);
+                    return new Ray<>(imgPos, worldPos, dir, Color.WHITE);
                 });
     }
 }

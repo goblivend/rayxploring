@@ -28,9 +28,4 @@ public class Rectangle extends Plane {
         var t = intersection(base, pos, ray);
         return inBounds(new Vector2D(t.t2(), t.t3())) ? t.t1() : null;
     }
-
-    @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
-        return super.rebound(ray);
-    }
 }

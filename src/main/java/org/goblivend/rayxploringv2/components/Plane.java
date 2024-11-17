@@ -4,6 +4,8 @@ import org.goblivend.rayxploringv2.Utils.Tuple;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 
 import java.awt.*;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static org.goblivend.rayxploringv2.Utils.MathUtils.*;
 
@@ -29,11 +31,20 @@ public class Plane implements Component<Vector3D> {
     }
 
     @Override
-    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
-        return new Ray<>(
-                ray.imgPos(),
-                ray.pos().translate(ray.dir(), intersection(base, pos, ray).t1()),
-                reboundPlane(dir, base, ray.dir()),
-                c -> ray.color().apply(reflectColor(c, color, reflectivity)));
+    public Tuple<Stream<Ray<Vector3D>>, Function<Stream<Color>, Color>> rebound(Ray<Vector3D> ray) {
+        return new Tuple<>(
+
+                Stream.of(
+                        new Ray<>(
+                                ray.imgPos(),
+                                ray.pos().translate(ray.dir(), intersection(base, pos, ray).t1()),
+                                reboundPlane(dir, base, ray.dir()),
+                                ray.color()
+                        )),
+                        colors -> colors.map(c -> reflectColor(c, color, reflectivity))
+                                .findFirst()
+                                .orElseThrow()
+
+        );
     }
 }
