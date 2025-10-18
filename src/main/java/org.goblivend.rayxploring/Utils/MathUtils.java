@@ -100,8 +100,8 @@ public class MathUtils {
     /**
      * Returns the roots of any polynomial of the shape aX^2 + bX + c
      *
-     * @param a
-     * @param b
+     * @param a porameter concerning X^2
+     * @param b porameter concerning X
      * @param c constant
      * @return The roots
      */
@@ -127,8 +127,8 @@ public class MathUtils {
      * Gets the smallest positive root out of a 2nd degree polynomial
      * of the shape aX^2 + bX + c = 0
      *
-     * @param a
-     * @param b
+     * @param a porameter concerning X^2
+     * @param b porameter concerning X
      * @param c constant
      * @return smallest positive root or null if not found
      */
@@ -139,14 +139,14 @@ public class MathUtils {
             return null;
 
         // return min t1 t2
-        if (roots.t1() < 0)
+        if (roots.t2() < 0)
             return null;
 
-        if (roots.t2() < 0)
-            return roots.t1();
+        if (roots.t1() < 0)
+            return roots.t2();
 
-        // t2 < t1
-        return roots.t2();
+        // t1 < t2
+        return roots.t1();
     }
 
     /**
@@ -174,25 +174,25 @@ public class MathUtils {
         double Y2 = plane.t2().y();
         double Z2 = plane.t2().z();
 
-        double delta = determinant(new Double[][] {
+        double delta = determinant(new double[][] {
                 {X1, X2, -dX},
                 {Y1, Y2, -dY},
                 {Z1, Z2, -dZ},
         });
 
-        double t = determinant(new Double[][]{
+        double t = determinant(new double[][]{
                 {X1, X2, X},
                 {Y1, Y2, Y},
                 {Z1, Z2, Z}
         }) / delta;
 
-        double lambda1 = determinant(new Double[][]{
+        double lambda1 = determinant(new double[][]{
                 {X, X2, -dX},
                 {Y, Y2, -dY},
                 {Z, Z2, -dZ}
         }) / delta;
 
-        double lambda2 = determinant(new Double[][]{
+        double lambda2 = determinant(new double[][]{
                 {X1, X, -dX},
                 {Y1, Y, -dY},
                 {Z1, Z, -dZ}
@@ -229,7 +229,7 @@ public class MathUtils {
         return new Tuple3<>(t, lambda1, lambda2);
     }
 
-    public static double determinant(Double[][] m) {
+    public static double determinant(double[][] m) {
         if (m.length == 0 || m.length != m[0].length) {
             throw new IllegalArgumentException();
         }
@@ -239,10 +239,61 @@ public class MathUtils {
         }
 
         if (m.length == 3) {
-            return m[0][0] * determinant(new Double[][] {{m[1][1], m[1][2]}, {m[2][1], m[2][2]}})
-                    - m[1][0] * determinant(new Double[][] {{m[0][1], m[0][2]}, {m[2][1], m[2][2]}})
-                    + m[2][0] * determinant(new Double[][] {{m[0][1], m[0][2]}, {m[1][1], m[1][2]}});
+            return m[0][0] * determinant(new double[][] {{m[1][1], m[1][2]}, {m[2][1], m[2][2]}})
+                    - m[1][0] * determinant(new double[][] {{m[0][1], m[0][2]}, {m[2][1], m[2][2]}})
+                    + m[2][0] * determinant(new double[][] {{m[0][1], m[0][2]}, {m[1][1], m[1][2]}});
         }
         throw new IllegalArgumentException("Determinant not defined for n not in [2, 3]");
+    }
+
+    public static double[][] matMul(double[][] m1, double[][] m2) {
+        assert m1.length > 0 && m1[0].length > 0;
+        assert m2.length > 0 && m2[0].length > 0;
+        assert m1[0].length == m2.length;
+
+        double[][] res = new double[m1.length][m2[0].length];
+
+        for (int i = 0; i < m1.length; i++) {
+            for (int k = 0; k < m2[0].length ; k++) {
+                for (int j = 0; j < m2.length; j++) {
+                    res[i][k] += m1[i][j] * m2[j][k];
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public static double[][] transpose(double[][] m) {
+        assert m.length > 0 && m[0].length > 0;
+
+        double[][] res = new double[m.length][m[0].length];
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[0].length; j++) {
+                res[j][i] = m[i][j];
+            }
+        }
+        return res;
+    }
+
+    public static Double interceptSphere(Vector3D center, double radius, Ray<Vector3D> ray) {
+        // (X + tDX - Px)^2 + (Y + tDY - Py)^2  + (Z + tDZ - Pz)^2 = R^2
+
+        // a = DX^2 + DY^2 + DY^2
+        double a = pow(ray.dir().x(), 2) + pow(ray.dir().y(), 2)+ pow(ray.dir().z(), 2);
+        // b = 2*DX*(X-Px) + 2*DY*(Y-Py) 2*DZ*(Z-Pz)
+        double b = 2*ray.dir().x()*(ray.pos().x() - center.x()) + 2*ray.dir().y()*(ray.pos().y() - center.y()) + 2*ray.dir().z()*(ray.pos().z() - center.z());
+        // c = (X-Px)^2 + (Y-Py)^2 + (Z-Pz)^2 - R^2
+        double c = pow(ray.pos().x() - center.x(), 2) + pow(ray.pos().y() - center.y(), 2) + pow(ray.pos().z() - center.z(), 2) - pow(radius, 2);
+
+        return spRoot(a, b, c);
+    }
+
+    public static double[][] transitionMatrix(Vector3D v1, Vector3D v2, Vector3D v3) {
+        return new double[][] {
+                {v1.x(), v2.x(), v3.x()},
+                {v1.y(), v2.y(), v3.y()},
+                {v1.z(), v2.z(), v3.z()}
+        };
     }
 }

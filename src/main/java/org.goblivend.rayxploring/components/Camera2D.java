@@ -2,15 +2,14 @@ package org.goblivend.rayxploring.components;
 
 import org.goblivend.rayxploring.Utils.Vector2D;
 
-import java.util.Optional;
 import java.awt.*;
+import java.util.Optional;
 import java.util.function.Predicate;
 
-import static java.lang.Math.min;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class Camera2D extends Camera<Vector2D> {
-    private final Vector2D center;
     private final Vector2D size;
 
     private final double minX;
@@ -20,7 +19,6 @@ public class Camera2D extends Camera<Vector2D> {
 
     public Camera2D(Vector2D center, Vector2D size, int width, int height) {
         super(width, height);
-        this.center = center;
         this.size = size;
 
         minX = center.x() - size.x() / 2;
@@ -36,7 +34,6 @@ public class Camera2D extends Camera<Vector2D> {
         return new Point(x, y);
     }
 
-    @Override
     public void record(Ray<Vector2D> ray) {
         Point p = getIndexes(ray.pos());
 

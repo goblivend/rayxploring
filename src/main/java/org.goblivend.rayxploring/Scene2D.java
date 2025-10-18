@@ -1,20 +1,21 @@
 package org.goblivend.rayxploring;
 
-import org.goblivend.rayxploring.components.Component;
-import org.goblivend.rayxploring.components.Camera;
-import org.goblivend.rayxploring.components.Light;
 import org.goblivend.rayxploring.Utils.Vector2D;
+import org.goblivend.rayxploring.components.Camera;
+import org.goblivend.rayxploring.components.Camera2D;
+import org.goblivend.rayxploring.components.Component;
+import org.goblivend.rayxploring.components.Light;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Scene2D implements Scene {
     private final List<Component<Vector2D>> components;
-    private final List<Camera<Vector2D>> cameras;
+    private final List<Camera2D> cameras;
     private final List<Light<Vector2D>> lights;
 
 
-    protected Scene2D(List<Component<Vector2D>> components, List<Camera<Vector2D>> cameras, List<Light<Vector2D>> lights) {
+    protected Scene2D(List<Component<Vector2D>> components, List<Camera2D> cameras, List<Light<Vector2D>> lights) {
         this.components = components;
         this.cameras = cameras;
         this.lights = lights;
@@ -28,7 +29,7 @@ public class Scene2D implements Scene {
                     .sorted()
                     .findFirst();
 
-            for (var cam: cameras) {
+            for (var cam : cameras) {
                 cam.trace(ray, firstHit.map(t -> ray.at(t).pos()));
             }
 
@@ -45,8 +46,9 @@ public class Scene2D implements Scene {
 
     public static class Scene2DBuilder {
         private List<Component<Vector2D>> components = new ArrayList<>();
-        private List<Camera<Vector2D>> cameras = new ArrayList<>();
+        private List<Camera2D> cameras = new ArrayList<>();
         private List<Light<Vector2D>> lights = new ArrayList<>();
+
         public Scene2DBuilder() {
         }
 
@@ -61,7 +63,7 @@ public class Scene2D implements Scene {
         }
 
         @SafeVarargs
-        public final Scene2DBuilder withCameras(Camera<Vector2D>... cameras) {
+        public final Scene2DBuilder withCameras(Camera2D... cameras) {
             this.cameras = Arrays.stream(cameras).toList();
             return this;
         }

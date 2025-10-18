@@ -1,7 +1,6 @@
 package org.goblivend.rayxploringv2;
 
 
-import org.goblivend.rayxploringv2.Utils.Tuple3;
 import org.goblivend.rayxploringv2.Utils.Vector2D;
 import org.goblivend.rayxploringv2.Utils.Vector3D;
 import org.goblivend.rayxploringv2.cameras.Camera3D;
@@ -42,8 +41,10 @@ public class Main {
                         new RubiksCube(0, new Vector3D(10, 10, 10), new Vector3D(1, 0, 0), 2),
                         new Cube(Color.BLUE, 0, new Vector3D(16, 16, 16), new Vector3D(1, 0, 0), 1)
                 ).withCameras(
-                        new Camera3D(600, 600, new Vector3D(8, 8, 8), new Vector3D(-1, -1, -1), new Vector2D(4, 4), false, true)
+                        new Camera3D(1000, 1000, new Vector3D(8, 8, 8), new Vector3D(-1, -1, -1), new Vector2D(4, 4), false, true)
                 ).build();
+        long time = System.currentTimeMillis();
         renderScene(scene);
+        System.out.printf("3D Scene rendered in %d ms%n", System.currentTimeMillis() - time);
     }
 }

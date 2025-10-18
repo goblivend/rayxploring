@@ -48,9 +48,10 @@ public class Main {
     private static void scene3d() throws IOException {
         Scene3D scene = Scene3D.Scene3DBuilder.of()
                 .withLights(
-                        new Torch3D(300_000, new Vector3D(0, 0, 0), new Vector3D(1, 0, 0), 20, new Color(255, 0, 0))
+                        new Torch3D(3_000_000, new Vector3D(-5, 0, 0), new Vector3D(1, 0, 0), 20, Color.WHITE)
                 ).withComponents(
-                        new Camera3D(new Vector3D(5, 0, 0), new Vector3D(-1, 0, 0), new Vector2D(16, 9), 1920, 1080)
+                        new Sphere(new Vector3D(0, 0, 0), 2, Color.RED),
+                        new Camera3D(new Vector3D(-3, 3, 0), new Vector3D(1, -1, 0), new Vector2D(32, 32), 400, 400)
                 ).build();
         renderScene(scene);
     }

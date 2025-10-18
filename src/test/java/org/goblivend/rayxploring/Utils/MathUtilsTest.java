@@ -145,22 +145,22 @@ class MathUtilsTest {
 
     private static Stream<Arguments> determinantTestsProvider() {
         return Stream.of(
-                Arguments.of(new Double[][] {
+                Arguments.of(new double[][] {
                         {1d, 0d}, {0d, 1d}
                 }, 1d),
-                Arguments.of(new Double[][] {
+                Arguments.of(new double[][] {
                         {0d, 1d}, {1d, 0d}
                 }, -1d),
-                Arguments.of(new Double[][] {
+                Arguments.of(new double[][] {
                         {1d, 1d}, {1d, 1d}
                 }, 0d),
-                Arguments.of(new Double[][] {
+                Arguments.of(new double[][] {
                         {1d, 2d}, {3d, 4d}
                 }, -2d),
-                Arguments.of(new Double[][] {
+                Arguments.of(new double[][] {
                         {1d, 0d, 0d}, {0d, 1d, 0d}, {0d, 0d, 1d}
                 }, 1d),
-                Arguments.of(new Double[][] {
+                Arguments.of(new double[][] {
                         {1d, 5d, 3d}, {2d, 4d, 7d}, {4d, 6d, 2d}
                 }, 74d)
         );
@@ -168,7 +168,7 @@ class MathUtilsTest {
 
     @ParameterizedTest
     @MethodSource("determinantTestsProvider")
-    void determinantValidTest(Double[][] m, Double d) {
+    void determinantValidTest(double[][] m, Double d) {
         assertEquals(d, determinant(m), 0.01d);
     }
 

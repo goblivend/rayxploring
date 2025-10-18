@@ -15,4 +15,20 @@ public record Vector2D(double x, double y) implements Vector<Vector2D> {
     public Vector2D reverse() {
         return new Vector2D(-x, -y);
     }
+
+    @Override
+    public Vector2D normalized() {
+        double h = hypot();
+        return new Vector2D(x/h, y/h);
+    }
+
+    @Override
+    public Vector2D plus(Vector2D v) {
+        return new Vector2D(x() + v.x, y() + v.y);
+    }
+
+    @Override
+    public double[][] toMatrix() {
+        return new double[][] { {x}, {y}};
+    }
 }

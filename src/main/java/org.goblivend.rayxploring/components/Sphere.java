@@ -1,22 +1,47 @@
 package org.goblivend.rayxploring.components;
 
+import org.goblivend.rayxploring.Utils.Tuple;
+import org.goblivend.rayxploring.Utils.Vector2D;
 import org.goblivend.rayxploring.Utils.Vector3D;
 
-import static java.lang.Math.pow;
-import static org.goblivend.rayxploring.Utils.MathUtils.spRoot;
+import java.awt.*;
 
-public record Sphere(Vector3D center, Integer radius) implements Component<Vector3D> {
+import static org.goblivend.rayxploring.Utils.MathUtils.*;
+
+public record Sphere(Vector3D center, Integer radius, Color color) implements Component<Vector3D> {
     @Override
     public Double intercept(Ray<Vector3D> ray) {
-        // (X + tDX - Px)^2 + (Y + tDY - Py)^2  + (Z + tDZ - Pz)^2 = R^2
+        return interceptSphere(center, radius, ray);
+    }
 
-        // a = DX^2 + DY^2 + DY^2
-        double a = pow(ray.dir().x(), 2) + pow(ray.dir().y(), 2)+ pow(ray.dir().z(), 2);
-        // b = 2*DX*(X-Px) + 2*DY*(Y-Py) 2*DZ*(Z-Pz)
-        double b = 2*ray.dir().x()*(ray.pos().x() - center.x()) + 2*ray.dir().y()*(ray.pos().y() - center.y()) + 2*ray.dir().z()*(ray.pos().z() - center.z());
-        // c = (X-Px)^2 + (Y-Py)^2 + (Z-Pz)^2 - R^2
-        double c = pow(ray.pos().x() - center.x(), 2) + pow(ray.pos().y() - center.y(), 2) + pow(ray.pos().z() - center.z(), 2) - pow(radius, 2);
+    private Color reflectColor(Color rayColor) {
+        return new Color(
+                (int) (color.getRed() / 255d * rayColor.getRed()),
+                (int) (color.getGreen() / 255d * rayColor.getGreen()),
+                (int) (color.getBlue() / 255d * rayColor.getBlue())
+                );
+    }
 
-        return spRoot(a, b, c);
+    @Override
+    public Ray<Vector3D> rebound(Ray<Vector3D> ray) {
+        Double interceptTime = intercept(ray);
+        assert interceptTime != null && interceptTime > 1E-5;
+
+
+        Vector3D hitPoint = ray.pos().translate(ray.dir(), interceptTime);
+
+        Vector3D Zaxis = new Vector3D(hitPoint.x() - center.x(), hitPoint.y() - center.y(), hitPoint.z() - center.z()).normalized();
+        Tuple<Vector3D, Vector3D> XYaxis = orthogonalBase(Zaxis);
+
+        double[][] transition = transitionMatrix(XYaxis.t1(), XYaxis.t2(), Zaxis);
+
+        double[][] dirNewBase = matMul(transpose(transition), ray.dir().reverse().toMatrix());
+
+        Vector2D angles = vector3dToAngles(new Vector3D(dirNewBase));
+        Vector3D rnewBase = anglesToVector3d(new Vector2D(angles.x()+Math.PI, angles.y()));
+
+        double[][] rebounded = matMul(transition, rnewBase.toMatrix());
+
+        return new Ray<>(hitPoint, new Vector3D(rebounded), reflectColor(ray.color()));
     }
 }

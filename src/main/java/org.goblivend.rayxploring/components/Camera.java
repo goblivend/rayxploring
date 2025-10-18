@@ -27,10 +27,31 @@ public abstract class Camera<V extends Vector<V>> {
         }
     }
 
-    public abstract void record(Ray<V> ray);
     public abstract void trace(Ray<V> ray, Optional<V> limit);
     public BufferedImage render() {
         BufferedImage image = new BufferedImage(width, height, Image.SCALE_DEFAULT);
+
+//        double maxSize = 0;
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                maxSize = Math.max(maxSize, img[y][x].size());
+//            }
+//        }
+//
+//        System.out.println(maxSize);
+//
+//        for (int y = 0; y < height; y++) {
+//            for (int x = 0; x < width; x++) {
+//                int rs = img[y][x].stream().map(Color::getRed).mapToInt(v -> v).sum();
+//                int gs = img[y][x].stream().map(Color::getGreen).mapToInt(v -> v).sum();
+//                int bs = img[y][x].stream().map(Color::getBlue).mapToInt(v -> v).sum();
+//
+//                int r = (int) Math.round(rs/maxSize);
+//                int g = (int) Math.round(gs/maxSize);
+//                int b = (int) Math.round(bs/maxSize);
+//                image.setRGB(x, y, new Color(r, g, b).getRGB());
+//            }
+//        }
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

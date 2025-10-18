@@ -19,4 +19,9 @@ public record Circle(Vector2D center, Integer radius) implements Component<Vecto
 
         return spRoot(a, b, c);
     }
+
+    @Override
+    public Ray<Vector2D> rebound(Ray<Vector2D> ray) {
+        return null;
+    }
 }
